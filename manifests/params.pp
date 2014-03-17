@@ -15,6 +15,7 @@ class gearman::params {
       $service_name = 'gearmand'
       $maxfiles = 1024
       $user = 'gearmand'
+      $epel_class = 'epel'
     }
     default: {
       case $::operatingsystem {

@@ -20,7 +20,9 @@ class gearman(
   $service_name = $gearman::params::service_name,
   $service_enable = true,
   $service_hasstatus = false,
-  $service_hasrestart = true
+  $service_hasrestart = true,
+  $round_robin = false,
+  $epel_class = $gearman::params::epel_class,
 ) inherits gearman::params {
 
   case $ensure {
@@ -50,10 +52,10 @@ class gearman(
   }
 
   if $::osfamily == 'RedHat' {
-    if ! defined(Class['epel']) {
-      include epel
+    if ! defined(Class[$epel_class]) {
+      include $epel_class
     }
-    $require_epel = Class['epel']
+    $require_epel = Class[$epel_class]
   } else {
     $require_epel = undef
   }
