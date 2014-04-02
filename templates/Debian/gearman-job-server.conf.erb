@@ -13,5 +13,5 @@ respawn
 
 script
     [ -f /etc/default/gearman-job-server ] && . /etc/default/gearman-job-server
-    exec start-stop-daemon --start --chuid gearman --exec /usr/sbin/gearmand -- $PARAMS --log-file=/var/log/gearman-job-server/gearman.log
+    exec start-stop-daemon --start --make-pidfile --pidfile /var/run/gearman/gearmand.pid --chuid gearman --exec /usr/sbin/gearmand -- $PARAMS --log-file=/var/log/gearman-job-server/gearman.log
 end script
