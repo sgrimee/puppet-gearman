@@ -21,8 +21,12 @@ class gearman(
   $service_enable = true,
   $service_hasstatus = false,
   $service_hasrestart = true,
+  $manage_service_file = false,
+  $service_file = $gearman::params::service_file,
+  $service_file_template = $gearman::params::service_file_template,
   $round_robin = false,
   $epel_class = $gearman::params::epel_class,
+  $delete_initd = false,
 ) inherits gearman::params {
 
   case $ensure {
@@ -85,6 +89,31 @@ class gearman(
         soft       => $maxfiles,
         notify     => Service[$service_name],
       }
+    }
+  }
+
+  # the upstart file on ubuntu ignores /etc/defaults/gearman-job-server
+  # see https://bugs.launchpad.net/ubuntu/+source/gearmand/+bug/1260830
+  if $manage_service_file == true {
+
+    notify { "${service_file}, ${service_file_template}":}
+
+    file { $service_file:
+      ensure  => file,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template($service_file_template),
+      require => Package[$package_name],
+      notify  => Service[$service_name],
+    }
+  }
+
+  # this may be needed on ubuntu where both an upstart script
+  # and /etc/init.d/ scripts are present and competing
+  if $delete_initd == true {
+    file { "/etc/init.d/${service_name}":
+      ensure => absent,
     }
   }
 

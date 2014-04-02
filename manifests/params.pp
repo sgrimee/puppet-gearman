@@ -7,6 +7,8 @@ class gearman::params {
       $service_name = 'gearman-job-server'
       $maxfiles = 1024
       $user = 'gearman'
+      $service_file_template = "${module_name}/Debian/gearman-job-server.conf.erb"
+      $service_file = '/etc/init/gearman-job-server.conf'
     }
     'RedHat': {
       $package_name = 'gearmand'
@@ -16,6 +18,8 @@ class gearman::params {
       $maxfiles = 1024
       $user = 'gearmand'
       $epel_class = 'epel'
+      $service_file_template = "${module_name}/RedHat/gearmand.erb"
+      $service_file = '/etc/init.d/gearmand'
     }
     default: {
       case $::operatingsystem {
