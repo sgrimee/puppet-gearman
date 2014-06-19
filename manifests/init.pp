@@ -96,7 +96,7 @@ class gearman(
   # see https://bugs.launchpad.net/ubuntu/+source/gearmand/+bug/1260830
   if $manage_service_file == true {
 
-    notify { "${service_file}, ${service_file_template}":}
+    debug ( "${service_file}, ${service_file_template}" )
 
     file { $service_file:
       ensure  => file,
