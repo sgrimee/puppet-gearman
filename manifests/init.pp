@@ -27,6 +27,7 @@ class gearman(
   $round_robin = false,
   $epel_class = $gearman::params::epel_class,
   $delete_initd = false,
+  $pid_dir = $gearman::params::pid_dir,
 ) inherits gearman::params {
 
   case $ensure {
@@ -36,6 +37,8 @@ class gearman(
       } else {
         $package_ensure = 'present'
       }
+
+      $pid_dir_ensure = directory
 
       case $service_ensure {
         running, stopped: {
@@ -49,6 +52,7 @@ class gearman(
     absent: {
       $package_ensure = 'absent'
       $service_ensure_real = 'stopped'
+      $pid_dir_ensure = absent
     }
     default: {
       fail('ensure parameter must be present or absent')
@@ -91,6 +95,11 @@ class gearman(
       }
     }
   }
+
+  file { $pid_dir:
+     ensure => $pid_dir_ensure,
+     owner  => $gearman::params::user,
+  } 
 
   # the upstart file on ubuntu ignores /etc/defaults/gearman-job-server
   # see https://bugs.launchpad.net/ubuntu/+source/gearmand/+bug/1260830
