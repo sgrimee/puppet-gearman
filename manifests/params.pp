@@ -36,5 +36,4 @@ class gearman::params {
   $listen = '0.0.0.0'
   $threads = 4
   $worker_wakeup = 0
-  $pid_dir = '/var/run/gearman'
 }
