@@ -16,6 +16,7 @@ class gearman(
   $config_file_template = $gearman::params::config_file_template,
   $autoupgrade = false,
   $package_name = $gearman::params::package_name,
+  $service_manage = true,
   $service_ensure = 'running',
   $service_name = $gearman::params::service_name,
   $service_enable = true,
@@ -76,7 +77,6 @@ class gearman(
     mode    => '0644',
     content => template("${module_name}/${config_file_template}"),
     require => Package[$package_name],
-    notify  => Service[$service_name],
   }
 
   if $disable_limits_module == false {
@@ -87,7 +87,6 @@ class gearman(
         limit_type => 'nofile',
         hard       => $maxfiles,
         soft       => $maxfiles,
-        notify     => Service[$service_name],
       }
     }
   }
@@ -105,7 +104,6 @@ class gearman(
       mode    => '0644',
       content => template($service_file_template),
       require => Package[$package_name],
-      notify  => Service[$service_name],
     }
   }
 
@@ -117,11 +115,14 @@ class gearman(
     }
   }
 
-  service { $service_name:
-    ensure     => $service_ensure_real,
-    enable     => $service_enable,
-    hasstatus  => $service_hasstatus,
-    hasrestart => $service_hasrestart,
-    require    => File[$config_file],
+  if $service_manage == true {
+    service { $service_name:
+      ensure     => $service_ensure_real,
+      enable     => $service_enable,
+      hasstatus  => $service_hasstatus,
+      hasrestart => $service_hasrestart,
+      require    => File[$config_file],
+      subscribe  => File[$config_file, $service_file],
+    }
   }
 }
